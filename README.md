@@ -7,7 +7,7 @@ This is the static GitHub Pages site for Gears Analytics.
 - `index.html` contains the page content, metadata, and structured organization details.
 - `styles.css` contains responsive layout, colors, and accessibility states.
 - `main.js` handles the mobile navigation and the WhatsApp inquiry draft.
-- `assets/` contains the logo and optimized WebP images used by the page.
+- `assets/` contains the logo and optimized WebP team and field photographs used by the page.
 
 The contact form opens a prefilled WhatsApp message to the published company number. It does not store or submit form data to this repository. Visitors review the draft before sending it.
 
