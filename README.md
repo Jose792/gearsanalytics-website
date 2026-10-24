@@ -1,20 +1,17 @@
 # Gears Analytics website
 
-This is the static GitHub Pages site for Gears Analytics.
+This repository contains the static Gears Analytics website.
 
 ## Site files
 
-- `index.html` contains the page content, metadata, and structured organization details.
-- `styles.css` contains responsive layout, colors, and accessibility states.
-- `main.js` handles the mobile navigation and the WhatsApp inquiry draft.
-- `assets/` contains the logo and optimized WebP team and field photographs used by the page.
+- `index.html` is the page served by GitHub Pages from the root of `main`.
+- `Gearsanalytics-Space-No-Cards.html` is the selected source page.
+- `gears-mark.svg` is the brand mark shown in the footer.
+- `build.js` generates the root page and Vercel output in `dist/`.
+- `site-enhancements.js` keeps the public page read-only, replaces generated team avatars with supplied photos, hides contact text behind accessible icon links, and adds the footer logo.
+- `team/` contains the team photos used in the public page gallery.
+- `vercel.json` configures Vercel to publish `dist/`.
 
-The contact form opens a prefilled WhatsApp message to the published company number. It does not store or submit form data to this repository. Visitors review the draft before sending it.
+## Build
 
-## Publish
-
-GitHub Pages serves the root of the `main` branch. Commit changes to these files and push to `main` to update the site.
-
-## Keep content accurate
-
-Before changing contact information, company history, or any project claims, confirm the details with the company. The research themes on the page describe areas of inquiry; they are not presented as case-study outcomes.
+Run `node build.js` to refresh the GitHub Pages root page and Vercel output.
