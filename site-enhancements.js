@@ -1,12 +1,36 @@
 (() => {
   const scriptUrl = document.currentScript.src;
   const teamPhotos = [
-    ['Joseph Mwita.jpeg', 'Joseph Mwita'],
-    ['Majyd and Wema Shadida.jpg', 'Majyd and Wema Shadida'],
-    ['PXL_20250821_124757857.PORTRAIT.jpg', 'Gears Analytics team portrait'],
-    ['PXL_20250930_115022913.RAW-01.COVER.jpg', 'Gears Analytics team portrait'],
-    ['Rajabu Mgoneka.jpeg', 'Rajabu Mgoneka'],
-    ['Rosemary sam.jpeg', 'Rosemary Sam'],
+    {
+      file: 'Joseph Mwita.jpeg',
+      alt: 'Portrait of Joseph Mwita',
+      caption: 'Joseph Mwita',
+    },
+    {
+      file: 'Majyd and Wema Shadida.jpg',
+      alt: 'Team photo of Majyd and Wema Shadida',
+      caption: 'Majyd and Wema Shadida',
+    },
+    {
+      file: 'PXL_20250821_124757857.PORTRAIT.jpg',
+      alt: 'Team photo; the image file does not identify the people',
+      caption: 'Team at field',
+    },
+    {
+      file: 'PXL_20250930_115022913.RAW-01.COVER.jpg',
+      alt: 'Team photo; the image file does not identify the people',
+      caption: 'Team at field',
+    },
+    {
+      file: 'Rajabu Mgoneka.jpeg',
+      alt: 'Portrait of Rajabu Mgoneka',
+      caption: 'Rajabu Mgoneka',
+    },
+    {
+      file: 'Rosemary sam.jpeg',
+      alt: 'Portrait of Rosemary Sam',
+      caption: 'Rosemary Sam',
+    },
   ];
 
   const style = document.createElement('style');
@@ -52,23 +76,29 @@
     }
     .team-photo-gallery {
       display: grid !important;
-      grid-template-columns: repeat(6, minmax(0, 1fr));
-      gap: 12px;
-      width: min(100%, 720px);
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 20px;
+      width: min(100%, 960px);
       margin: 0 0 24px;
     }
     .team-photo-item {
-      aspect-ratio: 1;
-      overflow: hidden;
-      border: 1px solid var(--line);
-      border-radius: 10px;
-      background: var(--blue-pale);
+      min-width: 0;
+      margin: 0;
     }
     .team-photo-item img {
       display: block;
       width: 100%;
-      height: 100%;
+      aspect-ratio: 4 / 3;
       object-fit: cover;
+      border-radius: 10px;
+      border: 1px solid var(--line);
+      background: var(--blue-pale);
+    }
+    .team-photo-caption {
+      padding-top: 8px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.4;
     }
     .site-footer-brand {
       display: flex;
@@ -88,7 +118,8 @@
     }
     @media (max-width: 640px) {
       .team-photo-gallery {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 16px 12px;
       }
     }
     @media (prefers-reduced-motion: reduce) {
@@ -171,23 +202,65 @@
   const replaceTeamAvatars = () => {
     const avatars = [...document.querySelectorAll('img[alt="Team avatar"]')];
     const gallery = avatars[0]?.parentElement?.parentElement;
-    if (!gallery || gallery.dataset.teamPhotosReady === 'true') return;
+    if (!gallery) return;
 
-    gallery.dataset.teamPhotosReady = 'true';
-    gallery.className = 'team-photo-gallery';
-    avatars.forEach((avatar, index) => {
-      const item = avatar.parentElement;
-      if (index >= teamPhotos.length) {
-        item.remove();
-        return;
+    if (gallery.dataset.teamPhotosReady !== 'true') {
+      gallery.dataset.teamPhotosReady = 'true';
+      gallery.className = 'team-photo-gallery';
+      gallery.setAttribute('aria-label', 'Team and field photos');
+      gallery.replaceChildren();
+      teamPhotos.forEach(({ file, alt, caption }) => {
+        const item = document.createElement('figure');
+        item.className = 'team-photo-item';
+        const image = document.createElement('img');
+        image.src = new URL(`team/${encodeURIComponent(file)}`, scriptUrl).href;
+        image.alt = alt;
+        image.loading = 'lazy';
+        image.decoding = 'async';
+        const label = document.createElement('figcaption');
+        label.className = 'team-photo-caption';
+        label.textContent = caption;
+        item.append(image, label);
+        gallery.appendChild(item);
+      });
+    }
+
+    const memberNames = gallery.nextElementSibling;
+    memberNames?.querySelectorAll('span').forEach((name) => {
+      if (name.textContent.trim() === 'Rajab Mgoneka') {
+        name.textContent = 'Rajabu Mgoneka';
       }
-      const [file, label] = teamPhotos[index];
-      item.className = 'team-photo-item';
-      avatar.src = new URL(`team/${encodeURIComponent(file)}`, scriptUrl).href;
-      avatar.alt = label;
-      avatar.loading = 'lazy';
-      avatar.decoding = 'async';
     });
+  };
+
+  const addServiceSolutions = () => {
+    const section = document.querySelector('#service');
+    if (!section) return;
+
+    const firstNumber = [...section.querySelectorAll('span')]
+      .find((element) => element.textContent.trim() === '01');
+    const firstRow = firstNumber?.parentElement;
+    const rows = firstRow?.parentElement;
+    if (!firstRow || !rows || rows.dataset.expandedSolutions === 'true') return;
+
+    firstRow.parentElement.querySelectorAll(':scope > div').forEach((row) => {
+      const title = row.children[1];
+      if (title?.textContent.trim() === 'Planning & Strategic insights') {
+        title.textContent = 'Strategic insights & planning';
+      }
+    });
+
+    const solutions = ['Marketing solutions', 'Business solutions', 'AI solutions'];
+    solutions.forEach((label) => {
+      const row = firstRow.cloneNode(false);
+      const number = firstRow.children[0].cloneNode(false);
+      number.textContent = String(rows.children.length + 1).padStart(2, '0');
+      const title = firstRow.children[1].cloneNode(false);
+      title.textContent = label;
+      row.append(number, title, firstRow.children[2].cloneNode(true));
+      rows.appendChild(row);
+    });
+    rows.dataset.expandedSolutions = 'true';
   };
 
   const removeGeneratedPeoplePhoto = () => {
@@ -216,6 +289,7 @@
   const updatePage = () => {
     enforceReadOnly();
     addContactIcons();
+    addServiceSolutions();
     replaceTeamAvatars();
     removeGeneratedPeoplePhoto();
     addFooterLogo();

@@ -8,7 +8,7 @@ This repository contains the static Gears Analytics website.
 - `Gearsanalytics-Space-No-Cards.html` is the selected source page.
 - `gears-mark.svg` is the brand mark shown in the footer.
 - `build.js` generates the root page and Vercel output in `dist/`.
-- `site-enhancements.js` keeps the public page read-only, replaces generated team avatars with supplied photos, hides contact text behind accessible icon links, and adds the footer logo.
+- `site-enhancements.js` keeps the public page read-only, adds marketing, business, and AI solutions to the services, matches named photos to their filenames and labels unnamed photos “Team at field,” hides contact text behind accessible icon links, and adds the footer logo.
 - `team/` contains the team photos used in the public page gallery.
 - `vercel.json` configures Vercel to publish `dist/`.
 
