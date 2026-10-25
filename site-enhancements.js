@@ -97,18 +97,6 @@
     .team-details-panel[hidden] {
       display: none !important;
     }
-    .team-member-list {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-      gap: 8px 20px;
-      margin-top: 20px;
-      padding: 0;
-      list-style: none;
-    }
-    .team-member-list li {
-      color: var(--muted);
-      font-size: 14px;
-    }
     .team-photo-toggle:hover {
       background: var(--blue-pale);
     }
@@ -186,50 +174,43 @@
     #publications li[hidden] {
       display: none !important;
     }
-    .site-menu-toggle {
-      align-items: center;
-      gap: 8px;
-      border: 1px solid var(--blue) !important;
-      background: var(--blue) !important;
-      color: #fff !important;
-      padding: 7px 10px !important;
-      vertical-align: middle;
-      white-space: nowrap;
-    }
-    .site-menu-icon {
-      display: inline-grid;
-      width: 26px;
-      height: 26px;
-      place-items: center;
-      border-radius: 3px;
-      background: rgba(255, 255, 255, .18);
-    }
-    .site-menu-icon svg {
-      width: 16px;
-      height: 16px;
-      fill: none;
-      stroke: currentColor;
-      stroke-linecap: round;
-      stroke-width: 2;
-    }
-    .mobile-nav-panel {
+    header > div[class*="md:hidden"][class*="border-t"] {
       border-color: rgba(255, 255, 255, .28) !important;
       background: var(--blue) !important;
       color: #fff !important;
     }
-    .mobile-nav-panel a {
+    .mobile-menu-brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin: 0 0 12px;
+      padding: 8px 10px 18px;
+      border-bottom: 1px solid rgba(255, 255, 255, .3);
+      color: #fff;
+      font-size: 18px;
+      font-weight: 800;
+      letter-spacing: .01em;
+      text-transform: none;
+    }
+    .mobile-menu-brand img {
+      display: block;
+      width: 56px;
+      height: 56px;
+      object-fit: contain;
+    }
+    header > div[class*="md:hidden"][class*="border-t"] a {
       display: block;
       border-radius: 3px;
       color: #fff !important;
       padding: 8px 10px;
       text-decoration: none;
     }
-    .mobile-nav-panel a:hover,
-    .mobile-nav-panel a:focus-visible {
+    header > div[class*="md:hidden"][class*="border-t"] a:hover,
+    header > div[class*="md:hidden"][class*="border-t"] a:focus-visible {
       background: rgba(255, 255, 255, .16);
       outline: none;
     }
-    .mobile-nav-panel a.mobile-nav-active {
+    header > div[class*="md:hidden"][class*="border-t"] a[class*="underline"] {
       background: rgba(255, 255, 255, .2);
       font-weight: 700;
       text-decoration: underline;
@@ -294,25 +275,73 @@
       flex-wrap: wrap;
       gap: 12px;
     }
+    @media (min-width: 768px) and (max-width: 900px) {
+      .responsive-process-steps {
+        flex-wrap: wrap;
+        gap: 16px !important;
+        font-size: clamp(32px, 5vw, 44px) !important;
+      }
+    }
     .site-footer-brand {
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 12px;
-      margin-bottom: 22px;
+      gap: 16px;
+      margin-bottom: 28px;
       color: #fff;
-      font-size: 14px;
-      font-weight: 600;
+      font-size: 20px;
+      font-weight: 800;
       letter-spacing: .02em;
     }
     .site-footer-brand img {
       display: block;
-      width: 42px;
-      height: 42px;
+      width: 76px;
+      height: 76px;
+    }
+    @media (min-width: 768px) {
+      header > div:first-child > div:first-child {
+        display: none !important;
+      }
     }
     @media (max-width: 767px) {
-      .site-menu-toggle {
+      .grid.grid-cols-12 {
+        grid-template-columns: minmax(0, 1fr) !important;
+      }
+      .grid.grid-cols-12 > * {
+        min-width: 0;
+      }
+      .grid.grid-cols-12 > [class*="col-span-"] {
+        grid-column: 1 / -1 !important;
+      }
+      header > div > button[aria-controls="mobile-navigation"] {
         display: inline-flex !important;
+        align-items: center;
+        gap: 8px;
+        border: 1px solid var(--blue) !important;
+        background: var(--blue) !important;
+        color: #fff !important;
+        padding: 7px 10px !important;
+        white-space: nowrap;
+      }
+      header > div > button[aria-controls="mobile-navigation"]::before {
+        display: inline-grid;
+        width: 26px;
+        height: 26px;
+        place-items: center;
+        border-radius: 3px;
+        background: rgba(255, 255, 255, .18);
+        content: "☰";
+        font-size: 18px;
+        line-height: 1;
+      }
+      header > div > button[aria-controls="mobile-navigation"][aria-expanded="true"]::before {
+        content: "×";
+        font-size: 22px;
+      }
+    }
+    @media (min-width: 768px) and (max-width: 850px) {
+      #home h1 {
+        font-size: clamp(48px, 6vw, 52px) !important;
       }
     }
     @media (max-width: 640px) {
@@ -403,62 +432,6 @@
     heading.after(links);
   };
 
-  const styleNavigation = () => {
-    const header = document.querySelector('header');
-    const button = header?.querySelector('button');
-    if (button) {
-      const isOpen = button.textContent.trim().toLowerCase().includes('close');
-      button.classList.add('site-menu-toggle');
-      button.setAttribute('aria-label', isOpen ? 'Close navigation' : 'Open navigation');
-      button.setAttribute('aria-expanded', String(isOpen));
-      let icon = button.querySelector('.site-menu-icon');
-      if (!icon) {
-        icon = document.createElement('span');
-        icon.className = 'site-menu-icon';
-        icon.setAttribute('aria-hidden', 'true');
-        button.prepend(icon);
-      }
-      const iconState = String(isOpen);
-      if (icon.dataset.menuOpen !== iconState) {
-        icon.innerHTML = isOpen
-          ? '<svg viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></svg>'
-          : '<svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg>';
-        icon.dataset.menuOpen = iconState;
-      }
-      let label = button.querySelector('.site-menu-label');
-      if (!label) {
-        label = document.createElement('span');
-        label.className = 'site-menu-label';
-        button.appendChild(label);
-      }
-      label.textContent = isOpen ? 'Close' : 'Menu';
-    }
-
-    const addPlansLink = (navigation) => {
-      if (!navigation || navigation.querySelector('a[href="#plans"]')) return;
-      const contactsLink = navigation.querySelector('a[href="#contacts"]');
-      if (!contactsLink) return;
-      const plansLink = contactsLink.cloneNode(true);
-      plansLink.href = '#plans';
-      plansLink.setAttribute('aria-label', 'Price and plans');
-      const label = plansLink.querySelector('span');
-      if (label) label.textContent = 'Price & Plans';
-      contactsLink.after(plansLink);
-    };
-
-    addPlansLink(header?.querySelector('nav'));
-    const panel = header?.querySelector('div[class*="md:hidden"][class*="border-t"]');
-    if (panel) {
-      panel.classList.add('mobile-nav-panel');
-      panel.id = 'primary-mobile-navigation';
-      button?.setAttribute('aria-controls', panel.id);
-      addPlansLink(panel);
-      panel.querySelectorAll('a').forEach((link) => {
-        link.classList.toggle('mobile-nav-active', link.classList.contains('text-[var(--blue)]'));
-      });
-    }
-  };
-
   const addPricingPlans = () => {
     const services = document.querySelector('#service');
     if (!services || document.querySelector('#plans')) return;
@@ -517,6 +490,7 @@
       gallery.setAttribute('role', 'group');
       gallery.setAttribute('aria-label', 'Team and field photos');
       gallery.replaceChildren();
+      memberNames?.remove();
       teamPhotos.forEach(({ file, alt, caption }) => {
         const item = document.createElement('figure');
         item.className = 'team-photo-item';
@@ -530,12 +504,6 @@
         label.textContent = caption;
         item.append(image, label);
         gallery.appendChild(item);
-      });
-
-      memberNames?.querySelectorAll('span').forEach((name) => {
-        if (name.textContent.trim() === 'Rajab Mgoneka') {
-          name.textContent = 'Rajabu Mgoneka';
-        }
       });
 
       const disclosure = document.createElement('div');
@@ -559,18 +527,6 @@
       gallery.before(disclosure);
       disclosure.append(toggle, panel);
       panel.appendChild(gallery);
-      if (memberNames && memberNames.classList.contains('flex')) {
-        const names = [...memberNames.querySelectorAll(':scope > span')];
-        const list = document.createElement('ul');
-        list.className = 'team-member-list';
-        names.forEach((name) => {
-          const item = document.createElement('li');
-          item.textContent = name.textContent.trim();
-          list.appendChild(item);
-        });
-        memberNames.replaceWith(list);
-        panel.appendChild(list);
-      }
     }
   };
 
@@ -715,6 +671,12 @@
     }));
   };
 
+  const improveResponsiveProcessSteps = () => {
+    const processLabel = [...document.querySelectorAll('#methods span')]
+      .find((element) => element.textContent.trim() === 'LITERATE');
+    processLabel?.parentElement?.classList.add('responsive-process-steps');
+  };
+
   const removeDesignNotes = () => {
     const unwantedText = new Set([
       'Swiss grid • Sans only • Blue fields • No cards',
@@ -801,7 +763,6 @@
 
   const updatePage = () => {
     enforceReadOnly();
-    styleNavigation();
     addContactIcons();
     addServiceSolutions();
     addPricingPlans();
@@ -811,16 +772,25 @@
     addStoryShowMore();
     addWorksShowMore();
     updateProblemsCopy();
+    improveResponsiveProcessSteps();
     removeDesignNotes();
     removeGeneratedPeoplePhoto();
     addFooterLogo();
   };
 
-  updatePage();
-  new MutationObserver(updatePage).observe(document.documentElement, {
-    attributes: true,
-    attributeFilter: ['contenteditable'],
-    childList: true,
-    subtree: true,
-  });
+  const root = document.querySelector('#root');
+  if (!root) throw new Error('Could not find the React root for site enhancements');
+  if (root.childElementCount) {
+    updatePage();
+  } else {
+    const enhancementObserver = new MutationObserver(() => {
+      if (!root.childElementCount) return;
+      updatePage();
+      enhancementObserver.disconnect();
+    });
+    enhancementObserver.observe(root, {
+      childList: true,
+      subtree: true,
+    });
+  }
 })();
