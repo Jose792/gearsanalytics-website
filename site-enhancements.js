@@ -157,6 +157,35 @@
       outline: 3px solid var(--blue);
       outline-offset: 3px;
     }
+    .show-more-toggle {
+      margin-top: 14px;
+      padding: 8px 0;
+      border: 0;
+      background: transparent;
+      color: var(--blue);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      cursor: pointer;
+    }
+    .show-more-toggle:hover {
+      text-decoration: underline;
+      text-underline-offset: 4px;
+    }
+    .show-more-toggle:focus-visible {
+      outline: 3px solid var(--blue);
+      outline-offset: 3px;
+    }
+    .story-copy:not(.is-expanded) {
+      display: -webkit-box;
+      overflow: hidden;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 4;
+    }
+    #publications li[hidden] {
+      display: none !important;
+    }
     .site-menu-toggle {
       align-items: center;
       gap: 8px;
@@ -585,6 +614,107 @@
     });
   };
 
+  const addShowMoreControl = ({ list, initiallyVisible, id }) => {
+    if (!list || list.dataset.showMoreReady === 'true') return;
+    const items = [...list.children].filter((item) => item.tagName === 'LI');
+    if (items.length <= initiallyVisible) return;
+
+    list.dataset.showMoreReady = 'true';
+    const control = document.createElement('button');
+    control.type = 'button';
+    control.className = 'show-more-toggle';
+    control.textContent = 'Show more';
+    control.setAttribute('aria-expanded', 'false');
+    const controlId = `show-more-${id}`;
+    control.id = controlId;
+    list.id = `${controlId}-list`;
+    control.setAttribute('aria-controls', list.id);
+    items.slice(initiallyVisible).forEach((item) => {
+      item.hidden = true;
+    });
+    control.addEventListener('click', () => {
+      const expanded = control.getAttribute('aria-expanded') !== 'true';
+      items.slice(initiallyVisible).forEach((item) => {
+        item.hidden = !expanded;
+      });
+      control.setAttribute('aria-expanded', String(expanded));
+      control.textContent = expanded ? 'Show less' : 'Show more';
+    });
+    list.after(control);
+  };
+
+  const addStoryShowMore = () => {
+    const about = document.querySelector('#about');
+    if (!about) return;
+    const label = [...about.querySelectorAll('*')]
+      .find((element) => element.children.length === 0 && element.textContent.trim() === 'Story');
+    const story = label?.nextElementSibling;
+    if (!story || story.tagName !== 'P' || story.dataset.showMoreReady === 'true') return;
+
+    story.dataset.showMoreReady = 'true';
+    story.classList.add('story-copy');
+    const control = document.createElement('button');
+    control.type = 'button';
+    control.className = 'show-more-toggle';
+    control.textContent = 'Show more';
+    control.setAttribute('aria-expanded', 'false');
+    control.setAttribute('aria-controls', 'company-story');
+    story.id = 'company-story';
+    control.addEventListener('click', () => {
+      const expanded = control.getAttribute('aria-expanded') !== 'true';
+      story.classList.toggle('is-expanded', expanded);
+      control.setAttribute('aria-expanded', String(expanded));
+      control.textContent = expanded ? 'Show less' : 'Show more';
+    });
+    story.after(control);
+  };
+
+  const addWorksShowMore = () => {
+    const publications = document.querySelector('#publications');
+    if (!publications) return;
+    ['Research works', 'Arts works'].forEach((title, index) => {
+      const label = [...publications.querySelectorAll('*')]
+        .find((element) => element.children.length === 0 && element.textContent.trim() === title);
+      let column = label?.parentElement;
+      while (column && column !== publications && !column.querySelector(':scope > ul')) {
+        column = column.parentElement;
+      }
+      const list = column?.querySelector(':scope > ul');
+      addShowMoreControl({
+        list,
+        initiallyVisible: index === 0 ? 2 : 1,
+        id: index === 0 ? 'research-works' : 'arts-works',
+      });
+    });
+  };
+
+  const updateProblemsCopy = () => {
+    const section = document.querySelector('#methods');
+    if (!section || section.dataset.expertProblemsReady === 'true') return;
+    const heading = [...section.querySelectorAll('*')]
+      .find((element) => element.children.length === 0 && element.textContent.trim() === 'Problems');
+    const list = heading?.parentElement.querySelector('ul');
+    if (!list) return;
+
+    const items = [
+      'Turning broad or complex questions into a focused, answerable scope',
+      'Reconciling incomplete, inconsistent, or fragmented data',
+      'Choosing defensible methods when evidence is mixed or uncertain',
+      'Coordinating specialist skills, tools, and methods across disciplines',
+      'Meeting tight deadlines without compromising research quality',
+      'Translating rigorous analysis into clear, actionable decisions',
+    ];
+    const template = list.querySelector('li');
+    if (!template) return;
+    section.dataset.expertProblemsReady = 'true';
+    heading.textContent = 'Typical problems—even experts face';
+    list.replaceChildren(...items.map((text) => {
+      const item = template.cloneNode(false);
+      item.textContent = text;
+      return item;
+    }));
+  };
+
   const removeDesignNotes = () => {
     const unwantedText = new Set([
       'Swiss grid • Sans only • Blue fields • No cards',
@@ -678,6 +808,9 @@
     replaceTeamAvatars();
     simplifyCoreValues();
     linkResearchWorks();
+    addStoryShowMore();
+    addWorksShowMore();
+    updateProblemsCopy();
     removeDesignNotes();
     removeGeneratedPeoplePhoto();
     addFooterLogo();
