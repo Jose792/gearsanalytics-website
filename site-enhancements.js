@@ -81,6 +81,26 @@
       width: min(100%, 960px);
       margin: 0 0 24px;
     }
+    .team-photo-gallery[hidden] {
+      display: none !important;
+    }
+    .team-photo-toggle {
+      margin: 0 0 20px;
+      padding: 9px 14px;
+      border: 1px solid var(--line);
+      color: var(--blue);
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: .04em;
+      cursor: pointer;
+    }
+    .team-photo-toggle:hover {
+      background: var(--blue-pale);
+    }
+    .team-photo-toggle:focus-visible {
+      outline: 3px solid var(--blue);
+      outline-offset: 3px;
+    }
     .team-photo-item {
       min-width: 0;
       margin: 0;
@@ -207,8 +227,25 @@
     if (gallery.dataset.teamPhotosReady !== 'true') {
       gallery.dataset.teamPhotosReady = 'true';
       gallery.className = 'team-photo-gallery';
+      gallery.id = 'team-photo-gallery';
+      gallery.hidden = true;
+      gallery.setAttribute('role', 'group');
       gallery.setAttribute('aria-label', 'Team and field photos');
       gallery.replaceChildren();
+      const toggle = document.createElement('button');
+      toggle.type = 'button';
+      toggle.className = 'team-photo-toggle';
+      toggle.textContent = 'Show team and field photos';
+      toggle.setAttribute('aria-expanded', 'false');
+      toggle.setAttribute('aria-controls', gallery.id);
+      toggle.addEventListener('click', () => {
+        gallery.hidden = !gallery.hidden;
+        toggle.setAttribute('aria-expanded', String(!gallery.hidden));
+        toggle.textContent = gallery.hidden
+          ? 'Show team and field photos'
+          : 'Hide team and field photos';
+      });
+      gallery.before(toggle);
       teamPhotos.forEach(({ file, alt, caption }) => {
         const item = document.createElement('figure');
         item.className = 'team-photo-item';
@@ -243,24 +280,41 @@
     const rows = firstRow?.parentElement;
     if (!firstRow || !rows || rows.dataset.expandedSolutions === 'true') return;
 
-    firstRow.parentElement.querySelectorAll(':scope > div').forEach((row) => {
-      const title = row.children[1];
-      if (title?.textContent.trim() === 'Planning & Strategic insights') {
-        title.textContent = 'Strategic insights & planning';
+    const sourceRows = [...rows.children].filter((row) =>
+      /^\d{2}$/.test(row.children[0]?.textContent.trim() || '') && row.children[1]
+    );
+    const rowsByTitle = new Map(
+      sourceRows.map((row) => [row.children[1].textContent.trim(), row])
+    );
+    const services = [
+      ['Problem identification, diagnostics, feasibility & pilot studies', 'Problem identification'],
+      ['Methods preparation & design', 'Methods preparations and design'],
+      ['Data collection, analysis & reporting', 'Data collection, Data Analysis & Reporting'],
+      ['System design, analytics & solutions', 'System design, analytics and solutions'],
+      ['Policy analysis & strategic insights', 'Policy analysis'],
+      ['Monitoring & evaluation (M&E)', 'M&E'],
+      ['Software & AI solutions', 'Software solutions'],
+      ['Marketing solutions', 'Software solutions'],
+      ['Business solutions', 'Software solutions'],
+      ['Intellectual property (IP) management', 'Software solutions'],
+      ['Intelligence services', 'Software solutions'],
+    ];
+    const serviceRows = services.map(([label, sourceTitle], index) => {
+      const sourceRow = rowsByTitle.get(sourceTitle);
+      if (!sourceRow) {
+        throw new Error(`Missing source service row: ${sourceTitle}`);
       }
+      const row = sourceRow.cloneNode(false);
+      const number = sourceRow.children[0].cloneNode(false);
+      number.textContent = String(index + 1).padStart(2, '0');
+      const title = sourceRow.children[1].cloneNode(false);
+      title.textContent = label;
+      row.append(number, title, sourceRow.children[2].cloneNode(true));
+      return row;
     });
 
-    const solutions = ['Marketing solutions', 'Business solutions', 'AI solutions'];
-    solutions.forEach((label) => {
-      const row = firstRow.cloneNode(false);
-      const number = firstRow.children[0].cloneNode(false);
-      number.textContent = String(rows.children.length + 1).padStart(2, '0');
-      const title = firstRow.children[1].cloneNode(false);
-      title.textContent = label;
-      row.append(number, title, firstRow.children[2].cloneNode(true));
-      rows.appendChild(row);
-    });
     rows.dataset.expandedSolutions = 'true';
+    rows.replaceChildren(...serviceRows);
   };
 
   const removeGeneratedPeoplePhoto = () => {
