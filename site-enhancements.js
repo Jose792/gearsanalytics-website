@@ -94,6 +94,21 @@
       letter-spacing: .04em;
       cursor: pointer;
     }
+    .team-details-panel[hidden] {
+      display: none !important;
+    }
+    .team-member-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 8px 20px;
+      margin-top: 20px;
+      padding: 0;
+      list-style: none;
+    }
+    .team-member-list li {
+      color: var(--muted);
+      font-size: 14px;
+    }
     .team-photo-toggle:hover {
       background: var(--blue-pale);
     }
@@ -120,6 +135,136 @@
       font-size: 13px;
       line-height: 1.4;
     }
+    .core-values-list {
+      display: grid;
+      gap: 8px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+    .core-values-list li {
+      padding: 0 0 8px;
+      border-bottom: 1px solid var(--line);
+      color: var(--navy);
+      font-size: 14px;
+    }
+    .research-work-link {
+      width: 100%;
+      color: inherit;
+      text-decoration: none;
+    }
+    .research-work-link:focus-visible {
+      outline: 3px solid var(--blue);
+      outline-offset: 3px;
+    }
+    .site-menu-toggle {
+      align-items: center;
+      gap: 8px;
+      border: 1px solid var(--blue) !important;
+      background: var(--blue) !important;
+      color: #fff !important;
+      padding: 7px 10px !important;
+      vertical-align: middle;
+      white-space: nowrap;
+    }
+    .site-menu-icon {
+      display: inline-grid;
+      width: 26px;
+      height: 26px;
+      place-items: center;
+      border-radius: 3px;
+      background: rgba(255, 255, 255, .18);
+    }
+    .site-menu-icon svg {
+      width: 16px;
+      height: 16px;
+      fill: none;
+      stroke: currentColor;
+      stroke-linecap: round;
+      stroke-width: 2;
+    }
+    .mobile-nav-panel {
+      border-color: rgba(255, 255, 255, .28) !important;
+      background: var(--blue) !important;
+      color: #fff !important;
+    }
+    .mobile-nav-panel a {
+      display: block;
+      border-radius: 3px;
+      color: #fff !important;
+      padding: 8px 10px;
+      text-decoration: none;
+    }
+    .mobile-nav-panel a:hover,
+    .mobile-nav-panel a:focus-visible {
+      background: rgba(255, 255, 255, .16);
+      outline: none;
+    }
+    .mobile-nav-panel a.mobile-nav-active {
+      background: rgba(255, 255, 255, .2);
+      font-weight: 700;
+      text-decoration: underline;
+      text-underline-offset: 5px;
+    }
+    .pricing-plans-section .pricing-quote-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 46px;
+      padding: 10px 16px;
+      border: 1px solid #fff;
+      background: #fff;
+      color: var(--blue);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-decoration: none;
+      text-transform: uppercase;
+    }
+    .pricing-plans-section .pricing-quote-link:hover {
+      background: transparent;
+      color: #fff;
+    }
+    .pricing-plans-section .pricing-quote-link:focus-visible {
+      outline: 3px solid #fff;
+      outline-offset: 3px;
+    }
+    .pricing-plans-section {
+      padding: clamp(56px, 9vw, 112px) 0;
+      background: var(--blue);
+      color: #fff;
+    }
+    .pricing-plans-content {
+      width: min(100%, 1400px);
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+    .pricing-plans-label {
+      margin: 0 0 20px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+    }
+    .pricing-plans-heading {
+      max-width: 18ch;
+      margin: 0 0 20px;
+      font-size: clamp(36px, 6vw, 64px);
+      font-weight: 700;
+      line-height: 1.08;
+    }
+    .pricing-plans-description {
+      max-width: 60ch;
+      margin: 0 0 32px;
+      font-size: 16px;
+      line-height: 1.65;
+    }
+    .pricing-plans-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
     .site-footer-brand {
       display: flex;
       align-items: center;
@@ -135,6 +280,11 @@
       display: block;
       width: 42px;
       height: 42px;
+    }
+    @media (max-width: 767px) {
+      .site-menu-toggle {
+        display: inline-flex !important;
+      }
     }
     @media (max-width: 640px) {
       .team-photo-gallery {
@@ -170,6 +320,11 @@
       label: 'Call Gears Analytics',
       href: 'tel:+255699577955',
       svg: '<path d="M22 16.9v3a2 2 0 0 1-2.2 2A19.8 19.8 0 0 1 3.1 5.2 2 2 0 0 1 5 3h3a2 2 0 0 1 2 1.7l.5 3a2 2 0 0 1-.6 1.8l-1.4 1.4a16 16 0 0 0 5.8 5.8l1.4-1.4a2 2 0 0 1 1.8-.6l3 .5a2 2 0 0 1 1.5 1.7Z"/>',
+    },
+    {
+      label: 'View pricing and plans',
+      href: '#plans',
+      svg: '<path d="M4 5h16v14H4z"/><path d="M8 9h8M8 13h5"/><path d="m16 16 1.5 1.5L20 15"/>',
     },
   ];
 
@@ -219,33 +374,120 @@
     heading.after(links);
   };
 
+  const styleNavigation = () => {
+    const header = document.querySelector('header');
+    const button = header?.querySelector('button');
+    if (button) {
+      const isOpen = button.textContent.trim().toLowerCase().includes('close');
+      button.classList.add('site-menu-toggle');
+      button.setAttribute('aria-label', isOpen ? 'Close navigation' : 'Open navigation');
+      button.setAttribute('aria-expanded', String(isOpen));
+      let icon = button.querySelector('.site-menu-icon');
+      if (!icon) {
+        icon = document.createElement('span');
+        icon.className = 'site-menu-icon';
+        icon.setAttribute('aria-hidden', 'true');
+        button.prepend(icon);
+      }
+      const iconState = String(isOpen);
+      if (icon.dataset.menuOpen !== iconState) {
+        icon.innerHTML = isOpen
+          ? '<svg viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></svg>'
+          : '<svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg>';
+        icon.dataset.menuOpen = iconState;
+      }
+      let label = button.querySelector('.site-menu-label');
+      if (!label) {
+        label = document.createElement('span');
+        label.className = 'site-menu-label';
+        button.appendChild(label);
+      }
+      label.textContent = isOpen ? 'Close' : 'Menu';
+    }
+
+    const addPlansLink = (navigation) => {
+      if (!navigation || navigation.querySelector('a[href="#plans"]')) return;
+      const contactsLink = navigation.querySelector('a[href="#contacts"]');
+      if (!contactsLink) return;
+      const plansLink = contactsLink.cloneNode(true);
+      plansLink.href = '#plans';
+      plansLink.setAttribute('aria-label', 'Price and plans');
+      const label = plansLink.querySelector('span');
+      if (label) label.textContent = 'Price & Plans';
+      contactsLink.after(plansLink);
+    };
+
+    addPlansLink(header?.querySelector('nav'));
+    const panel = header?.querySelector('div[class*="md:hidden"][class*="border-t"]');
+    if (panel) {
+      panel.classList.add('mobile-nav-panel');
+      panel.id = 'primary-mobile-navigation';
+      button?.setAttribute('aria-controls', panel.id);
+      addPlansLink(panel);
+      panel.querySelectorAll('a').forEach((link) => {
+        link.classList.toggle('mobile-nav-active', link.classList.contains('text-[var(--blue)]'));
+      });
+    }
+  };
+
+  const addPricingPlans = () => {
+    const services = document.querySelector('#service');
+    if (!services || document.querySelector('#plans')) return;
+
+    const section = document.createElement('section');
+    section.id = 'plans';
+    section.className = 'pricing-plans-section bg-[var(--blue)] py-20 text-white md:py-28';
+    section.setAttribute('aria-labelledby', 'pricing-plans-heading');
+
+    const content = document.createElement('div');
+    content.className = 'pricing-plans-content mx-auto max-w-[1400px] px-6 md:px-10';
+    const eyebrow = document.createElement('p');
+    eyebrow.className = 'pricing-plans-label mb-5 text-[11px] font-bold uppercase tracking-[0.2em] text-white';
+    eyebrow.textContent = 'Pricing & plans';
+    const heading = document.createElement('h2');
+    heading.id = 'pricing-plans-heading';
+    heading.className = 'pricing-plans-heading mb-5 max-w-[18ch] font-display text-4xl font-bold leading-tight md:text-6xl';
+    heading.textContent = 'Request a quote';
+    const description = document.createElement('p');
+    description.className = 'pricing-plans-description mb-8 max-w-[60ch] text-base leading-relaxed text-white';
+    description.textContent =
+      'Tell us what you need and we will respond with a suitable plan and pricing. Contact us by WhatsApp or email to request a quote.';
+
+    const message =
+      'Hello Gears Analytics, I would like to request your available plans and a quote for my project. Project details:';
+    const whatsapp = document.createElement('a');
+    whatsapp.className = 'pricing-quote-link';
+    whatsapp.href = `https://wa.me/255699577955?text=${encodeURIComponent(message)}`;
+    whatsapp.target = '_blank';
+    whatsapp.rel = 'noopener noreferrer';
+    whatsapp.textContent = 'Request via WhatsApp';
+    const email = document.createElement('a');
+    email.className = 'pricing-quote-link';
+    email.href = `mailto:admini@gearsanalytics.space?subject=${encodeURIComponent(
+      'Request for pricing and plans'
+    )}&body=${encodeURIComponent(message)}`;
+    email.textContent = 'Request via email';
+    const actions = document.createElement('div');
+    actions.className = 'pricing-plans-actions flex flex-wrap gap-3';
+    actions.append(whatsapp, email);
+    content.append(eyebrow, heading, description, actions);
+    section.appendChild(content);
+    services.after(section);
+  };
+
   const replaceTeamAvatars = () => {
     const avatars = [...document.querySelectorAll('img[alt="Team avatar"]')];
     const gallery = avatars[0]?.parentElement?.parentElement;
     if (!gallery) return;
 
     if (gallery.dataset.teamPhotosReady !== 'true') {
+      const memberNames = gallery.nextElementSibling;
       gallery.dataset.teamPhotosReady = 'true';
       gallery.className = 'team-photo-gallery';
       gallery.id = 'team-photo-gallery';
-      gallery.hidden = true;
       gallery.setAttribute('role', 'group');
       gallery.setAttribute('aria-label', 'Team and field photos');
       gallery.replaceChildren();
-      const toggle = document.createElement('button');
-      toggle.type = 'button';
-      toggle.className = 'team-photo-toggle';
-      toggle.textContent = 'Show team and field photos';
-      toggle.setAttribute('aria-expanded', 'false');
-      toggle.setAttribute('aria-controls', gallery.id);
-      toggle.addEventListener('click', () => {
-        gallery.hidden = !gallery.hidden;
-        toggle.setAttribute('aria-expanded', String(!gallery.hidden));
-        toggle.textContent = gallery.hidden
-          ? 'Show team and field photos'
-          : 'Hide team and field photos';
-      });
-      gallery.before(toggle);
       teamPhotos.forEach(({ file, alt, caption }) => {
         const item = document.createElement('figure');
         item.className = 'team-photo-item';
@@ -260,12 +502,100 @@
         item.append(image, label);
         gallery.appendChild(item);
       });
-    }
 
-    const memberNames = gallery.nextElementSibling;
-    memberNames?.querySelectorAll('span').forEach((name) => {
-      if (name.textContent.trim() === 'Rajab Mgoneka') {
-        name.textContent = 'Rajabu Mgoneka';
+      memberNames?.querySelectorAll('span').forEach((name) => {
+        if (name.textContent.trim() === 'Rajab Mgoneka') {
+          name.textContent = 'Rajabu Mgoneka';
+        }
+      });
+
+      const disclosure = document.createElement('div');
+      disclosure.className = 'team-disclosure';
+      const toggle = document.createElement('button');
+      toggle.type = 'button';
+      toggle.className = 'team-photo-toggle';
+      toggle.textContent = 'Meet the team';
+      toggle.setAttribute('aria-expanded', 'false');
+      const panel = document.createElement('div');
+      panel.className = 'team-details-panel';
+      panel.id = 'team-details-panel';
+      panel.hidden = true;
+      toggle.setAttribute('aria-controls', panel.id);
+      toggle.addEventListener('click', () => {
+        panel.hidden = !panel.hidden;
+        toggle.setAttribute('aria-expanded', String(!panel.hidden));
+        toggle.textContent = panel.hidden ? 'Meet the team' : 'Hide team';
+      });
+
+      gallery.before(disclosure);
+      disclosure.append(toggle, panel);
+      panel.appendChild(gallery);
+      if (memberNames && memberNames.classList.contains('flex')) {
+        const names = [...memberNames.querySelectorAll(':scope > span')];
+        const list = document.createElement('ul');
+        list.className = 'team-member-list';
+        names.forEach((name) => {
+          const item = document.createElement('li');
+          item.textContent = name.textContent.trim();
+          list.appendChild(item);
+        });
+        memberNames.replaceWith(list);
+        panel.appendChild(list);
+      }
+    }
+  };
+
+  const simplifyCoreValues = () => {
+    const about = document.querySelector('#about');
+    if (!about || about.querySelector('.core-values-list')) return;
+    const addValue = [...about.querySelectorAll('span')]
+      .find((element) => element.textContent.trim().toLowerCase() === 'add value');
+    const values = addValue?.parentElement;
+    if (!values) return;
+
+    const list = document.createElement('ul');
+    list.className = 'core-values-list';
+    [...values.querySelectorAll(':scope > span')].forEach((value) => {
+      const text = value.textContent.trim();
+      if (!text || text === '+' || text.toLowerCase() === 'add value') return;
+      const item = document.createElement('li');
+      item.textContent = text;
+      list.appendChild(item);
+    });
+    values.replaceWith(list);
+  };
+
+  const linkResearchWorks = () => {
+    document.querySelectorAll('#publications ul > li').forEach((item) => {
+      if (item.querySelector('.research-work-link')) return;
+      const title = item.querySelector('span:last-child')?.textContent.trim();
+      if (!title) return;
+
+      const link = document.createElement('a');
+      link.className = `${item.className} research-work-link`;
+      link.href = `https://wa.me/255699577955?text=${encodeURIComponent(
+        `Hello Gears Analytics, I would like to request: ${title}`
+      )}`;
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer';
+      link.setAttribute('aria-label', `Request "${title}" via WhatsApp`);
+      while (item.firstChild) link.appendChild(item.firstChild);
+      item.className = '';
+      item.appendChild(link);
+    });
+  };
+
+  const removeDesignNotes = () => {
+    const unwantedText = new Set([
+      'Swiss grid • Sans only • Blue fields • No cards',
+      'Blue = expressive / critical',
+    ]);
+    document.querySelectorAll('body *').forEach((element) => {
+      if (element.children.length || !unwantedText.has(element.textContent.trim())) return;
+      if (element.textContent.trim().startsWith('Blue =')) {
+        element.parentElement?.remove();
+      } else {
+        element.remove();
       }
     });
   };
@@ -294,8 +624,7 @@
       ['Policy analysis & strategic insights', 'Policy analysis'],
       ['Monitoring & evaluation (M&E)', 'M&E'],
       ['Software & AI solutions', 'Software solutions'],
-      ['Marketing solutions', 'Software solutions'],
-      ['Business solutions', 'Software solutions'],
+      ['Marketing & business solutions', 'Software solutions'],
       ['Intellectual property (IP) management', 'Software solutions'],
       ['Intelligence services', 'Software solutions'],
     ];
@@ -342,9 +671,14 @@
 
   const updatePage = () => {
     enforceReadOnly();
+    styleNavigation();
     addContactIcons();
     addServiceSolutions();
+    addPricingPlans();
     replaceTeamAvatars();
+    simplifyCoreValues();
+    linkResearchWorks();
+    removeDesignNotes();
     removeGeneratedPeoplePhoto();
     addFooterLogo();
   };

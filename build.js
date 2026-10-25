@@ -22,6 +22,17 @@ async function main() {
   if (html.includes('type:"file"') || html.includes('CLICK TO REPLACE')) {
     throw new Error('Viewer image-edit controls remain in the generated page');
   }
+  const designNote =
+    'j("span",{className:"hidden md:inline-flex items-center gap-2",contentEditable:!0,suppressContentEditableWarning:!0,children:[s("span",{className:"w-2 h-2 bg-[var(--blue)] rounded-full"}),"Swiss grid • Sans only • Blue fields • No cards"]})';
+  const blueNote =
+    'j("div",{className:"mt-8 inline-flex items-center gap-2 text-[11px] font-body tracking-[0.12em] uppercase text-[var(--blue)] font-bold",children:[s("span",{className:"w-2 h-2 bg-[var(--blue)] rounded-full"}),s("span",{contentEditable:!0,suppressContentEditableWarning:!0,children:"Blue = expressive / critical"})]})';
+  if (!html.includes(designNote) || !html.includes(blueNote)) {
+    throw new Error('Could not find the design notes to remove from the selected source');
+  }
+  html = html.replace(designNote, 'null').replace(blueNote, 'null');
+  if (html.includes('Swiss grid') || html.includes('Blue = expressive / critical')) {
+    throw new Error('Editorial design notes remain in the generated page');
+  }
   html = html.replace(
     '<title>React Artifact</title>',
     '<title>Gears Analytics | Research &amp; Development</title>'
